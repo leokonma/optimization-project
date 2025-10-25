@@ -1,7 +1,7 @@
 # 🚚 Optimization of Distribution Network in R
 
 This project implements a **simulation and optimization framework** for a distribution system with a **central depot (PT)** and multiple **outer stations**.  
-It is built in **R** and serves as a foundation for testing optimization algorithms such as **Monte Carlo**, **Simulated Annealing**, **Blind Search**, and **Simplex-based methods**.
+It is built in **R** and serves as a foundation for testing optimization algorithms such as **Monte Carlo**, **Simulated Annealing**, **Blind Search**, etc.
 
 ---
 
