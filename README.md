@@ -1,65 +1,90 @@
 # 🚚 Optimization of Distribution Network in R
 
 This project implements a **simulation and optimization framework** for a distribution system with a **central depot (PT)** and multiple **outer stations**.  
-It is built in **R** and serves as a foundation for testing optimization algorithms such as **Monte Carlo**, **Simulated Annealing**, **Blind Search**, etc.
+It is developed in **R** and serves as a testing platform for various **metaheuristic optimization algorithms** such as **Blind Search**, **Hill Climbing**, **Simulated Annealing**, **Monte Carlo**, and **Grid Search**.
 
 ---
 
-## 📁 Project Structure
+## 📂 Project Structure
 
 <pre>
 code/
-├── demand_supply.R     # Generate demand (D) and surplus (S) nodes
-├── graph_utils.R       # Build network graph with Manhattan distances
-├── main_Data.R         # Main data preparation script
-├── objective_fun.R     # Objective function (template for optimization)
-├── plot_utils.R        # Plotting utilities for graph visualization
-├── stations.R          # Create station abbreviations and mapping
-├── .RData              # Session data (optional)
-├── .Rhistory           # R session history
+├── class_algorithms.R   # Defines and runs multiple optimization algorithms
+├── demand_supply.R      # Generates demand (D) and surplus (S) nodes
+├── final algorthm.R     # Integrates and executes the complete optimization pipeline
+├── graph_utils.R        # Builds the network graph with Manhattan distances
+├── main_Data.R          # Main data preparation and parameter setup
+├── plot_utils.R         # Visualization utilities for graphs and routes
+├── stations.R           # Creates station abbreviations and mapping
 </pre>
 
 ---
 
 ## ⚙️ Overview
 
-### 1️⃣ `stations.R`
-Generates **abbreviations** for station names and builds the mapping structure.  
-Functions:
-- `abbr()`: Creates clean abbreviations from full names.  
-- `make_mapping()`: Selects outer stations and ensures unique identifiers.
+### 🏗️ 1. `stations.R`
+Generates abbreviations for all station names and creates the mapping between  
+**central depot (PT)** and **outer stations**.  
+**Functions:**
+- `abbr()`: Cleans and abbreviates station names.  
+- `make_mapping()`: Builds mapping and selects the PT station.
 
 ---
 
-### 2️⃣ `graph_utils.R`
-Creates a **complete undirected graph** connecting all nodes using **Manhattan distances**.  
-Functions:
-- `manhattan_dist(a, b, coords)`: Distance function between nodes.  
-- `make_graph_with_weights()`: Generates graph and coordinates randomly.
+### 🧭 2. `graph_utils.R`
+Builds the **network graph** connecting all nodes using **Manhattan distances**.  
+**Functions:**
+- `manhattan_dist()`: Calculates Manhattan distance between two coordinates.  
+- `make_graph_with_weights()`: Generates the full network structure (edges, nodes, coordinates).  
 
 ---
 
-### 3️⃣ `demand_supply.R`
-Randomly assigns **demand** and **surplus** stations.  
-Functions:
-- `build_demand_supply()`: Divides nodes into demand (`D`) and surplus (`S`), assigning random volumes.
+### ⚖️ 3. `demand_supply.R`
+Randomly assigns **demand** and **surplus** to outer stations.  
+**Functions:**
+- `build_demand_supply()`: Creates two balanced lists (`demand`, `surplus`)  
+  used in optimization and cost evaluation.
 
 ---
 
-### 4️⃣ `plot_utils.R`
-Visualizes the graph using the **igraph** package.  
-Functions:
-- `plot_network()`: Custom plot with colors, labels, and weighted edges.
+### 📊 4. `plot_utils.R`
+Handles **graph visualization** and **best-route plotting** using *igraph*.  
+**Functions:**
+- `plot_network()`: Displays the base distribution graph.  
+- `plot_network_time()`: Shows edge weights in time units.  
+- `plot_best_route()`: Highlights the optimal route found by an algorithm.
 
 ---
 
-### 5️⃣ `main_Data.R`
-The **central execution script** that:
-- Defines simulation parameters (`N_OUTER`, `N_SURPLUS`, `S0`, etc.).
-- Loads all modules (`stations`, `graph_utils`, `demand_supply`, `plot_utils`).
-- Creates the mapping, builds the graph, and generates demand/supply.
-- Prints a detailed summary of the simulation setup.
+### 🧮 5. `class_algorithms.R`
+Implements and executes multiple **optimization algorithms**.  
+**Algorithms included:**
+- Blind Search  
+- Monte Carlo Search  
+- Grid Search (local refinement)  
+- Hill Climbing  
+- Simulated Annealing  
 
-Run this file first to prepare the environment:
-```R
+Each algorithm searches for the most efficient delivery route by minimizing distance, time, or cost.
+
+---
+
+### 🧠 6. `final algorthm.R`
+Integrates all modules and runs the **full optimization pipeline**:  
+- Loads all helper scripts and data.  
+- Executes algorithms sequentially.  
+- Collects and summarizes results in a single `data.frame` (`summary_df`).  
+- Displays optimal route and total cost/time.
+
+---
+
+### ⚙️ 7. `main_Data.R`
+Prepares all simulation parameters and environment setup:  
+- Defines constants (`N_OUTER`, `N_SURPLUS`, `S0`, etc.).  
+- Builds mapping, graph, demand, and surplus.  
+- Prints a clean summary of the scenario.  
+Run this first before any optimization:
+
+```r
 source("main_Data.R")
+
