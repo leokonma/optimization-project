@@ -70,23 +70,19 @@ coords    <- gg$coords
 manhattan <- gg$manhattan
 
 # ==== 7) Generar demanda y superávit ====
-ds <- build_demand_supply(mapping, PT = PT, N_SURPLUS = N_SURPLUS, S0 = S0)
-D  <- ds$D
+
+# Crear demanda y superávit usando las estaciones externas (sin incluir PT)
+ds <- build_demand_supply(
+  outer_abbr = outer_abbr,
+  N_OUTER = N_OUTER,
+  N_SURPLUS = N_SURPLUS,
+  PT = PT
+)
+
+# Asignar resultados a variables globales
+D  <- ds$D   # si la función devuelve versión extendida
 S  <- ds$S
-d  <- ds$d
-s  <- ds$s
-S0 <- ds$S0
+d  <- ds$demand
+s  <- ds$surplus
+S0 <- S0     # mantenemos el stock inicial que ya venía de antes
 
-# ==== 8) Mostrar resumen de datos ====
-cat("\n=== Resumen de datos preparados ===\n")
-cat(sprintf("Nodos totales: %d (PT + %d outer)\n", nrow(mapping), N_OUTER))
-cat(sprintf("Demand nodes (D): %d | Surplus nodes (S): %d\n", length(D), length(S)))
-cat("PT (punto central):", PT, "\n\n")
-
-cat("Demanda por nodo (d):\n")
-print(d)
-cat("\nSuperávit por nodo (s):\n")
-print(s)
-
-
-cat("\nDatos preparados correctamente. Listo para definir función objetivo o métodos de simulación.\n")

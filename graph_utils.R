@@ -1,35 +1,36 @@
 # ================================================================
-# graph_utils.R — Construcción de grafo con distancias Manhattan
+# graph_utils.R — grafo con layout Manhattan y pesos en distancia (bloques)
 # ================================================================
-
 library(igraph)
 
-# Calcular distancia Manhattan entre dos nodos usando coords
-manhattan_dist <- function(a, b, coords){
-  ax <- coords$x[coords$name == a]
-  ay <- coords$y[coords$name == a]
-  bx <- coords$x[coords$name == b]
-  by <- coords$y[coords$name == b]
-  abs(ax - bx) + abs(ay - by)
+make_graph_with_weights <- function(outer_abbr = NULL, PT = "PT") {
+  # ---- Nodos y layout fijo ----
+  coords <- data.frame(
+    name = c("EIJ","BT","U","ACSE","PSF","CM","M","PT","A","TS","EAN","P"),
+    x = c(1,2,3,4,5, 1,2,3,4,5, 2,1),
+    y = c(5,5,5,5,5, 4,3,2,3,4, 1,1)
+  )
+  
+  # ---- Aristas y pasos Manhattan ----
+  edges <- data.frame(
+    from = c("EIJ","BT","U","ACSE","PSF","TS","A","M","CM","M","EAN","PT","PT","U","ACSE"),
+    to   = c("BT","U","ACSE","PSF","TS","A","EAN","CM","EIJ","P","P","A","M","TS","CM"),
+    manhattan_steps = c(1,1,1,1,1,1,4,1,1,1,1,2,6,3,4)
+  )
+  
+  # Pesos = distancias Manhattan puras (bloques)
+  edges$weight <- edges$manhattan_steps
+  
+  g <- graph_from_data_frame(edges[, c("from","to","weight")],
+                             vertices = coords, directed = FALSE)
+  
+  E(g)$weight <- edges$weight
+  V(g)$x <- coords$x
+  V(g)$y <- coords$y
+  
+  #cat("\n--- Grafo generado con distancias Manhattan (bloques) ---\n")
+  #print(head(edges, 5))
+  
+  return(list(g = g, coords = coords))
 }
 
-# Crear grafo con coordenadas simuladas
-make_graph_with_weights <- function(outer_abbr, PT = "PT", seed = 123){
-  set.seed(seed)
-  n <- length(outer_abbr) + 1
-  coords <- data.frame(
-    name = c(PT, outer_abbr),
-    x = runif(n, 0, 10),
-    y = runif(n, 0, 10)
-  )
-  
-  g <- make_full_graph(n, directed = FALSE)
-  V(g)$name <- coords$name
-  E(g)$weight <- apply(as_edgelist(g), 1, function(e)
-    manhattan_dist(e[1], e[2], coords)
-  )
-  
-  manhattan_fun <- function(a, b) manhattan_dist(a, b, coords)
-  
-  list(g = g, coords = coords, manhattan = manhattan_fun)
-}
